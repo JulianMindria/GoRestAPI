@@ -1,0 +1,438 @@
+basePath: /api
+definitions:
+  entities.Brand:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  entities.Product:
+    properties:
+      brandID:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  entities.Transaction:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      productID:
+        type: string
+      total:
+        type: number
+      userID:
+        type: string
+      voucherID:
+        type: string
+    type: object
+  entities.User:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      points:
+        type: integer
+    type: object
+  entities.Voucher:
+    properties:
+      brand_id:
+        type: string
+      code:
+        type: string
+      cost_in_point:
+        type: integer
+      expiration:
+        type: string
+      id:
+        type: string
+      type:
+        type: string
+      value:
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a simple Go REST API with Swagger documentation.
+  title: GoRestAPI Swagger Example API
+  version: "1.0"
+paths:
+  /brands:
+    get:
+      description: Retrieve a list of all brands in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Brand'
+            type: array
+      summary: Get all brands
+      tags:
+      - brands
+    post:
+      consumes:
+      - application/json
+      description: Create a new brand and store it in the database
+      parameters:
+      - description: Brand Data
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Brand'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Brand'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Create a new brand
+      tags:
+      - brands
+  /brands/{id}:
+    delete:
+      description: Delete the brand with the given ID from the database
+      parameters:
+      - description: Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete a brand by ID
+      tags:
+      - brands
+    get:
+      description: Get the details of a brand by its ID
+      parameters:
+      - description: Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Brand'
+      summary: Get a brand by ID
+      tags:
+      - brands
+  /products:
+    get:
+      description: Retrieve a list of all products in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Product'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Product'
+      summary: Get all products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product and store it in the database
+      parameters:
+      - description: Product Data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Product'
+      summary: Create a new product
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      description: Delete the product with the given ID from the database
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Product'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Product'
+      summary: Delete a product by ID
+      tags:
+      - products
+    get:
+      description: Get the details of a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Product'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Product'
+      summary: Get a product by ID
+      tags:
+      - products
+  /transactions:
+    get:
+      description: Get a list of all transactions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Transaction'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Transaction'
+      summary: Get all transactions
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Create a new transaction and store it in the database
+      parameters:
+      - description: Transaction Data
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Transaction'
+      summary: Create a new transaction
+      tags:
+      - transactions
+  /transactions/{id}:
+    delete:
+      description: Delete a transaction by its ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Transaction'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Transaction'
+      summary: Delete a transaction
+      tags:
+      - transactions
+    get:
+      description: Get transaction details by its ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Transaction'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Transaction'
+      summary: Get a transaction by ID
+      tags:
+      - transactions
+  /users:
+    get:
+      description: Retrieve all users from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.User'
+            type: array
+      summary: Get all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Add a new user to the database
+      parameters:
+      - description: user data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/entities.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Create a user
+      tags:
+      - users
+  /users/{id}/update:
+    put:
+      consumes:
+      - application/json
+      description: Update the points of a user based on their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Points to be added
+        in: query
+        name: points
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.User'
+      summary: Update User Points
+      tags:
+      - users
+  /vouchers:
+    get:
+      description: Retrieve all vouchers from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Voucher'
+            type: array
+      summary: Get all vouchers
+      tags:
+      - vouchers
+    post:
+      consumes:
+      - application/json
+      description: Add a new voucher to the database
+      parameters:
+      - description: Voucher data
+        in: body
+        name: voucher
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Voucher'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Voucher'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Create a voucher
+      tags:
+      - vouchers
+swagger: "2.0"
