@@ -23,7 +23,7 @@ GoRestAPI is a RESTful API built using Golang with **DDD (Domain-Driven Design)*
 ## Installation
 ### 1️⃣ Clone the Repository
 ```sh
-git clone https://github.com/yourusername/GoRestAPI.git
+git clone https://github.com/julianmindria/GoRestAPI.git
 cd GoRestAPI
 ```
 
