@@ -31,7 +31,7 @@ func main() {
 	voucherUseCase := usecases.NewVoucherUseCase(voucherRepo)
 
 	userRepo := repositories.NewUserRepository(db)
-	userUseCase := usecases.NewUserUseCase(userRepo)
+	userUseCase := usecases.NewUserUseCase(userRepo, voucherRepo)
 
 	brandRepo := repositories.NewBrandRepository(db)
 	brandUseCase := usecases.NewBrandUseCase(brandRepo)
@@ -40,7 +40,7 @@ func main() {
 	productUseCase := usecases.NewProductUseCase(productRepo)
 
 	transactionRepo := repositories.NewTransactionRepository(db)
-	transactionUseCase := usecases.NewTransactionUseCase(transactionRepo)
+	transactionUseCase := usecases.NewTransactionUseCase(transactionRepo, userRepo, productRepo, voucherRepo)
 
 	r := gin.Default()
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))

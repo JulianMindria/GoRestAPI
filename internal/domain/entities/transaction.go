@@ -7,10 +7,17 @@ import (
 )
 
 type Transaction struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UserID    uuid.UUID
+	ID        uuid.UUID `gorm:"type:uuid;primaryKey"`
+	CreatedAt time.Time `gorm:"default:now()"`
+
+	UserID uuid.UUID
+	User   User `gorm:"foreignKey:UserID"`
+
 	ProductID uuid.UUID
-	VoucherID uuid.UUID
-	Total     float64
+	Product   Product `gorm:"foreignKey:ProductID"`
+
+	VoucherID *uuid.UUID
+	Voucher   *Voucher `gorm:"foreignKey:VoucherID"`
+
+	Total int
 }

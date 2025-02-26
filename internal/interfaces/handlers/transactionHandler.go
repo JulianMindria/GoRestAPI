@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"GoRestAPI/internal/application/dto"
 	"GoRestAPI/internal/application/usecases"
 	"GoRestAPI/internal/domain/entities"
 	"GoRestAPI/internal/interfaces/common"
@@ -40,7 +41,9 @@ func (h *TransactionHandler) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, common.SuccessResponse("transaction created successfully", transaction))
+	transactionDTO := dto.NewTransactionDTO(&transaction)
+
+	c.JSON(http.StatusCreated, common.SuccessResponse("transaction created successfully", transactionDTO))
 }
 
 // @Summary Get a transaction by ID
@@ -65,7 +68,9 @@ func (h *TransactionHandler) GetTransactionByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, common.SuccessResponse("transaction retrieved successfully", transaction))
+	transactionDTO := dto.NewTransactionDTO(transaction)
+
+	c.JSON(http.StatusOK, common.SuccessResponse("transaction retrieved successfully", transactionDTO))
 }
 
 // @Summary Get all transactions
@@ -108,4 +113,35 @@ func (h *TransactionHandler) DeleteTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, common.SuccessResponse("transaction deleted successfully", transactionID))
+}
+
+// @Summary Get Transaction Details by User
+// @Description Retrieve all transactions for a specific user
+// @Tags transactions
+// @Produce json
+// @Param user_id path string true "User ID"
+// @Success 200 {array} entities.Transaction
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /transactions/user/{user_id} [get]
+func (h *TransactionHandler) GetTransactionDetailByUser(c *gin.Context) {
+	userIDParam := c.Param("user_id")
+	userID, err := uuid.Parse(userIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	transactions, err := h.transactionUseCase.GetTransactionDetailByUser(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve transactions"})
+		return
+	}
+
+	var transactionDTOs []dto.TransactionDetailDTO
+	for _, transaction := range transactions {
+		transactionDTOs = append(transactionDTOs, dto.NewTransactionDetailDTO(&transaction))
+	}
+
+	c.JSON(http.StatusOK, common.SuccessResponse("Transactions retrieved successfully", transactionDTOs))
 }

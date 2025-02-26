@@ -16,7 +16,7 @@ func NewVoucherUseCase(repo repositories.VoucherRepository) *VoucherUseCase {
 	return &VoucherUseCase{repo: repo}
 }
 
-func (uc *VoucherUseCase) CreateVoucher(code string, costInPoint int, expiration time.Time, vType string, value float64, brandID uuid.UUID) (*entities.Voucher, error) {
+func (uc *VoucherUseCase) CreateVoucher(code string, costInPoint int, expiration time.Time, vType string, value int, brandID uuid.UUID) (*entities.Voucher, error) {
 	voucher := &entities.Voucher{
 		ID:          uuid.New(),
 		Code:        code,

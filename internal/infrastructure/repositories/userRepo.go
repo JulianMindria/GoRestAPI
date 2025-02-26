@@ -3,6 +3,7 @@ package repositories
 import (
 	"GoRestAPI/internal/domain/entities"
 	"GoRestAPI/internal/domain/repositories"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -38,6 +39,27 @@ func (r *UserRepository) Delete(id uuid.UUID) error {
 }
 
 func (r *UserRepository) UpdatePoints(id uuid.UUID, points int) error {
-	// Use GORM's Model and Updates to update the points field
 	return r.db.Model(&entities.User{}).Where("id = ?", id).Update("points", points).Error
+}
+
+func (r *UserRepository) Update(user *entities.User) error {
+	return r.db.Save(user).Error
+}
+
+func (r *UserRepository) GetAvailableVouchersForUser(id uuid.UUID) ([]entities.Voucher, error) {
+	var vouchers []entities.Voucher
+
+	err := r.db.
+		Joins("JOIN brands ON vouchers.brand_id = brands.id").
+		Joins("JOIN products ON products.brand_id = brands.id").
+		Joins("JOIN transactions ON transactions.product_id = products.id").
+		Where("transactions.user_id = ?", id).
+		Where("vouchers.expiration > ?", time.Now()).
+		Find(&vouchers).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return vouchers, nil
 }

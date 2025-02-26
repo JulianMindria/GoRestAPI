@@ -11,4 +11,5 @@ type TransactionRepository interface {
 	GetByID(id uuid.UUID) (*entities.Transaction, error)
 	GetAll() ([]entities.Transaction, error)
 	Delete(id uuid.UUID) error
+	GetTransactionDetailByUser(id uuid.UUID) ([]entities.Transaction, error)
 }

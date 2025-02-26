@@ -34,7 +34,7 @@ func (h *VoucherHandler) CreateVoucher(c *gin.Context) {
 		CostInPoint int       `json:"cost_in_point"`
 		Expiration  time.Time `json:"expiration"`
 		Type        string    `json:"type"`
-		Value       float64   `json:"value"`
+		Value       int       `json:"value"`
 		BrandID     uuid.UUID `json:"brand_id"`
 	}
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"GoRestAPI/internal/application/usecases"
+	"GoRestAPI/internal/domain/entities"
 	"GoRestAPI/internal/interfaces/common"
 	"net/http"
 	"strconv"
@@ -30,9 +31,9 @@ func NewUserHandler(usecase *usecases.UserUseCase) *UserHandler {
 // @Router /users [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input struct {
-		ID     uuid.UUID `json:"id"`
-		Name   string    `json:"name"`
-		Points int       `json:"points"`
+		Name    string `json:"name"`
+		Points  int    `json:"points"`
+		Balance int    `json:"balance"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -40,7 +41,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.usecase.CreateUser(input.Name, input.Points)
+	user, err := h.usecase.CreateUser(input.Name, input.Points, input.Balance)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, common.ErrorResponse(http.StatusInternalServerError, "Failed to create user", err))
 		return
@@ -100,4 +101,78 @@ func (h *UserHandler) UpdateUserPoints(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, common.SuccessResponse("Points updated successfully", nil))
+}
+
+// UpdateUser updates a user's details
+// @Summary Update a user
+// @Description Update user details such as name, points, and balance
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Param user body entities.User true "User data to be updated"
+// @Success 200 {object} map[string]interface{} "User updated successfully"
+// @Failure 400 {object} map[string]interface{} "Invalid input"
+// @Failure 404 {object} map[string]interface{} "User not found"
+// @Failure 500 {object} map[string]interface{} "Failed to update user"
+// @Router /users/{id} [put]
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Invalid user ID", err))
+		return
+	}
+
+	var input struct {
+		Name    string `json:"name"`
+		Points  int    `json:"points"`
+		Balance int    `json:"balance"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Invalid input", err))
+		return
+	}
+
+	user := entities.User{
+		ID:      id,
+		Name:    input.Name,
+		Points:  input.Points,
+		Balance: input.Balance,
+	}
+
+	err = h.usecase.UpdateUser(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, common.ErrorResponse(http.StatusInternalServerError, "Failed to update user", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, common.SuccessResponse("User updated successfully", user))
+}
+
+// GetAvailableVouchersForUser retrieves vouchers a user can redeem
+// @Summary Get available vouchers for a user
+// @Description Fetch all vouchers that a user has enough points to redeem and that are not expired
+// @Tags users
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {array} entities.Voucher "List of available vouchers"
+// @Failure 400 {object} map[string]interface{} "Invalid user ID"
+// @Failure 404 {object} map[string]interface{} "User not found"
+// @Failure 500 {object} map[string]interface{} "Failed to retrieve vouchers"
+// @Router /users/{id}/vouchers [get]
+func (h *UserHandler) GetAvailableVouchersForUser(c *gin.Context) {
+	userID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Invalid user ID", err))
+		return
+	}
+
+	vouchers, err := h.usecase.GetAvailableVouchersForUser(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, common.ErrorResponse(http.StatusInternalServerError, "Failed to retrieve vouchers", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, common.SuccessResponse("Available vouchers retrieved successfully", vouchers))
 }
